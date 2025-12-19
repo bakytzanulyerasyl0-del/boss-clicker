@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Boss Clicker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onclick="startAudio()">
+
+<!-- ЗВУКИ -->
+<audio id="bgMusic" src="sounds/bg.mp3" loop></audio>
+<audio id="hitSound" src="sounds/hit.mp3"></audio>
+<audio id="buySound" src="sounds/buy.mp3"></audio>
+
+<div class="game">
+
+  <div class="boss-area">
+    <h1>👹 БОСС</h1>
+
+    <div class="hp-bar">
+      <div id="hpFill"></div>
+    </div>
+
+    <p>HP: <span id="bossHp">20</span></p>
+
+    <img src="images/monster.png" class="monster" onclick="attack()">
+
+    <p id="text">Ткни по монстру</p>
+  </div>
+
+  <div class="shop-area">
+    <h2>🛒 ПРОКАЧКИ</h2>
+
+    <p>💰 Деньги: <span id="money">0</span></p>
+    <p>⚔️ Урон: <span id="damage">1</span></p>
+    <p>💥 Крит: <span id="crit">0%</span></p>
+
+    <button onclick="buyDamage()">⚔️ +1 урон (10)</button>
+    <button onclick="buyDamage5()">⚔️ +5 урон (50)</button>
+    <button onclick="buyDamage10()">⚔️ +10 урон (120)</button>
+    <button onclick="buyDamageX2()">🔥 x2 урон (300)</button>
+    <button onclick="buyDamageX5()">💀 x5 урон (1200)</button>
+
+    <button onclick="buyCrit()">💥 +5% крит (100)</button>
+    <button onclick="buyCritPower()">💣 Крит x3 (250)</button>
+    <button onclick="buyUltraCrit()">☄️ Ультра-крит (600)</button>
+
+    <button onclick="buyGold()">💰 x1.5 золото (150)</button>
+    <button onclick="buyPassive()">🕰️ Пассив +1/с (200)</button>
+
+    <button onclick="buyAuto()">🤖 Авто-удар (200)</button>
+    <button onclick="buyAutoSpeed()">⚡ Авто быстрее (400)</button>
+    <button onclick="buySecondAuto()">🤖🤖 2 авто-удара (800)</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
