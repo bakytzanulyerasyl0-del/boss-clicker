@@ -13,8 +13,9 @@ let bossHp = bossMaxHp;
 
 let autoAttack = false;
 let autoSpeed = 1200;
-let autoCount = 1;
 let autoTimer = null;
+
+let isDead = false;
 
 // ЗВУКИ
 const bgMusic = document.getElementById("bgMusic");
@@ -26,14 +27,16 @@ let audioStarted = false;
 function startAudio() {
   if (!audioStarted) {
     bgMusic.volume = 0.3;
-    bgMusic.play().catch(() => {});
+    bgMusic.play().catch(()=>{});
     audioStarted = true;
   }
 }
 
 // ---------- UI ----------
-function updateUI(text = "") {
-  document.getElementById("money").innerText = money;
+function updateUI(text="") {
+  if (bossHp < 0 || isNaN(bossHp)) bossHp = 0;
+
+  document.getElementById("money").innerText = Math.floor(money);
   document.getElementById("damage").innerText = damage;
   document.getElementById("bossHp").innerText = bossHp;
   document.getElementById("crit").innerText =
@@ -42,39 +45,47 @@ function updateUI(text = "") {
   document.getElementById("hpFill").style.width =
     Math.max(0, (bossHp / bossMaxHp) * 100) + "%";
 
-  if (text) {
-    document.getElementById("text").innerText = text;
-  }
+  if (text) document.getElementById("text").innerText = text;
 }
 
 // ---------- АТАКА ----------
 function attack() {
+  if (isDead) return;
+
   hitSound.currentTime = 0;
-  hitSound.play().catch(() => {});
+  hitSound.play().catch(()=>{});
 
   let dmg = damage;
   if (Math.random() < critChance) {
-    dmg *= critPower;
+    dmg = Math.floor(dmg * critPower);
   }
 
   bossHp -= dmg;
-  if (bossHp < 0) bossHp = 0;
 
-  updateUI("⚔️ Урон " + dmg);
-
-  // 👑 БОСС УБИТ
-  if (bossHp === 0) {
-    // награда
-    let reward = Math.floor(5 * goldBonus);
-    money += reward;
-
-    // усиление босса
-    bossLevel++;
-    bossMaxHp = Math.floor(bossMaxHp * 1.25 + 10);
-    bossHp = bossMaxHp;
-
-    updateUI("👹 Новый босс! Уровень " + bossLevel);
+  if (bossHp <= 0) {
+    bossHp = 0;
+    killBoss();
+  } else {
+    updateUI("⚔️ Урон " + dmg);
   }
+}
+
+// ---------- СМЕРТЬ БОССА ----------
+function killBoss() {
+  isDead = true;
+
+  let reward = Math.floor((5 + bossLevel * 2) * goldBonus);
+  money += reward;
+
+  updateUI("💀 Босс убит! +" + reward + " 💰");
+
+  setTimeout(() => {
+    bossLevel++;
+    bossMaxHp = Math.floor(bossMaxHp * 1.3 + 15);
+    bossHp = bossMaxHp;
+    isDead = false;
+    updateUI("👹 Новый босс • Уровень " + bossLevel);
+  }, 600);
 }
 
 // ---------- ПРОКАЧКИ ----------
@@ -83,64 +94,56 @@ function buy(cost, action, text) {
     money -= cost;
     action();
     buySound.currentTime = 0;
-    buySound.play().catch(() => {});
+    buySound.play().catch(()=>{});
     updateUI(text);
   }
 }
 
-// УРОН
-function buyDamage() { buy(10, () => damage += 1, "⚔️ Урон +1"); }
-function buyDamage5() { buy(50, () => damage += 5, "⚔️ Урон +5"); }
-function buyDamage10() { buy(120, () => damage += 10, "⚔️ Урон +10"); }
-function buyDamageX2() { buy(300, () => damage *= 2, "🔥 Урон x2"); }
-function buyDamageX5() { buy(1200, () => damage *= 5, "💀 Урон x5"); }
+function buyDamage(){ buy(10, ()=>damage+=1, "+1 урон"); }
+function buyDamage5(){ buy(50, ()=>damage+=5, "+5 урон"); }
+function buyDamage10(){ buy(120, ()=>damage+=10, "+10 урон"); }
+function buyDamageX2(){ buy(300, ()=>damage*=2, "x2 урон"); }
+function buyDamageX5(){ buy(1200, ()=>damage*=5, "x5 урон"); }
 
-// КРИТ
-function buyCrit() { buy(100, () => critChance += 0.05, "💥 Крит +5%"); }
-function buyCritPower() { buy(250, () => critPower = 3, "💣 Крит x3"); }
-function buyUltraCrit() { buy(600, () => critChance += 0.15, "☄️ Ультра-крит"); }
+function buyCrit(){ buy(100, ()=>critChance+=0.05, "+5% крит"); }
+function buyCritPower(){ buy(250, ()=>critPower=3, "Крит x3"); }
 
-// ЗОЛОТО
-function buyGold() { buy(150, () => goldBonus *= 1.5, "💰 Золото x1.5"); }
-function buyPassive() { buy(200, () => passiveIncome += 1, "🕰️ Пассив +1/с"); }
+function buyGold(){ buy(150, ()=>goldBonus*=1.5, "Золото x1.5"); }
+function buyPassive(){ buy(200, ()=>passiveIncome+=1, "Пассив +1"); }
 
-// AUTO
-function buyAuto() {
+// ---------- AUTO ----------
+function buyAuto(){
   if (!autoAttack) {
-    buy(200, () => {
+    buy(200, ()=>{
       autoAttack = true;
-      autoTimer = setInterval(() => {
-        for (let i = 0; i < autoCount; i++) {
-          attack();
-        }
+      autoTimer = setInterval(()=>{
+        if (!isDead) attack();
       }, autoSpeed);
-    }, "🤖 Авто-удар включён");
+    }, "🤖 Авто-удар");
   }
 }
 
-function buyAutoSpeed() {
-  buy(400, () => {
-    autoSpeed = Math.max(300, autoSpeed - 200);
+function buyAutoSpeed(){
+  buy(400, ()=>{
+    autoSpeed = Math.max(300, autoSpeed-200);
     if (autoAttack) {
       clearInterval(autoTimer);
-      autoTimer = setInterval(() => {
-        for (let i = 0; i < autoCount; i++) {
-          attack();
-        }
+      autoTimer = setInterval(()=>{
+        if (!isDead) attack();
       }, autoSpeed);
     }
   }, "⚡ Авто быстрее");
 }
 
-function buySecondAuto() {
-  buy(800, () => autoCount = 2, "🤖🤖 2 авто-удара");
-}
-
 // ---------- ПАССИВ ----------
-setInterval(() => {
+setInterval(()=>{
   money += passiveIncome;
   updateUI();
-}, 1000);
+},1000);
 
-// СТАРТ
+// ---------- КЛИК (БЕЗ ДУБЛЕЙ) ----------
+const monster = document.getElementById("monster");
+monster.onclick = attack;
+
+// ---------- СТАРТ ----------
 updateUI("Ткни по монстру");

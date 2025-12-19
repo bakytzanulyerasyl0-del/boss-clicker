@@ -1,34 +1,62 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #050505, #151515);
-  color: white;
+  color: #eee;
+  background: radial-gradient(circle at top, #1a0000, #000);
+  overflow-x: hidden;
+}
+
+/* дымящийся фон */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-radial-gradient(circle, rgba(255,0,0,0.05) 0 2px, transparent 2px 6px);
+  animation: fog 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fog {
+  from { transform: translateY(0); }
+  to { transform: translateY(-200px); }
 }
 
 .game {
   min-height: 100vh;
 }
 
+/* БОСС */
 .boss-area {
   text-align: center;
   padding: 20px;
-  background: radial-gradient(circle at top, #222, #000);
 }
 
 .monster {
-  width: 200px;
+  width: 220px;
+  margin: 15px 0;
   cursor: pointer;
-  transition: transform 0.1s;
+  animation: float 3s ease-in-out infinite;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+/* АНИМАЦИЯ МОНСТРА */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
 }
 
 .monster:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
+  filter: brightness(1.4);
 }
 
+/* HP */
 .hp-bar {
   width: 220px;
-  height: 20px;
-  background: #444;
+  height: 18px;
+  background: #330000;
   margin: 10px auto;
   border-radius: 10px;
   overflow: hidden;
@@ -37,12 +65,13 @@ body {
 #hpFill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, red, orange);
+  background: linear-gradient(90deg, darkred, red);
 }
 
+/* МАГАЗИН */
 .shop-area {
   padding: 20px;
-  background: #0f0f0f;
+  background: rgba(0,0,0,0.7);
 }
 
 button {
@@ -52,13 +81,12 @@ button {
   display: block;
   padding: 14px;
   font-size: 15px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: none;
-  background: #222;
-  color: white;
-  cursor: pointer;
+  background: #220000;
+  color: #fff;
 }
 
 button:active {
-  background: #333;
+  background: #440000;
 }
