@@ -12,9 +12,9 @@ body {
   /* КРАСИВЫЙ ФОН */
   background: radial-gradient(
     circle at top,
-    #1b1b3a,
-    #0f0f1f,
-    #050509
+    #8c0505,
+    #692210,
+    #320c09
   );
 }
 
@@ -168,5 +168,25 @@ button:active {
   #attackBtn {
     width: 90%;
     font-size: 24px;
+  }
+}
+.damage-text {
+  position: absolute;
+  color: red;
+  font-size: 26px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: flyUp 1s ease-out forwards;
+  text-shadow: 0 0 5px black;
+}
+
+@keyframes flyUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px);
   }
 }
