@@ -92,4 +92,36 @@ body {
   75% { transform: translateX(-6px); }
   100% { transform: translateX(0); }
 }
+@media (max-width: 768px) {
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .top-link {
+    font-size: 20px;
+    padding: 12px 20px;
+  }
+
+  #monster {
+    width: 160px;
+  }
+
+  #attackBtn {
+    font-size: 22px;
+    padding: 18px 30px;
+    width: 90%;
+  }
+
+  .shop button {
+    width: 95%;
+    font-size: 16px;
+  }
+
+  .stats {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+}
 
