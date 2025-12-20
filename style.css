@@ -190,3 +190,41 @@ button:active {
     transform: translateY(-60px);
   }
 }
+/* УРОН */
+.damage-text {
+  position: absolute;
+  color: red;
+  font-size: 26px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: flyUp 1s ease-out forwards;
+  text-shadow: 0 0 6px black;
+}
+
+@keyframes flyUp {
+  from { opacity:1; transform: translateY(0); }
+  to { opacity:0; transform: translateY(-60px); }
+}
+
+/* ТРЯСКА */
+.shake {
+  animation: shake 0.2s;
+}
+@keyframes shake {
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-5px)}
+  100%{transform:translateX(0)}
+}
+
+/* СТРАШНЫЙ ФОН */
+.scary-bg {
+  background: radial-gradient(circle, #400000, #000);
+  animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.3); }
+}

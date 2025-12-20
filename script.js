@@ -6,6 +6,10 @@ let money = 0;
 let damage = 1;
 let goldReward = 10;
 
+let kills = 0;              // убийства обычного монстра
+let phase = 0;              // 0 = обычный, 1/2/3 = monster2/3/4
+let chainActive = false;    // идёт ли цепочка монстров
+
 // ===== ПРОКАЧКИ =====
 let critChance = 0;
 let critMult = 2;
@@ -36,12 +40,13 @@ const monster = document.getElementById("monster");
 const hitSound = document.getElementById("hitSound");
 const buySound = document.getElementById("buySound");
 const bgSound = document.getElementById("bgSound");
+const hyperSound = document.getElementById("hyperSound");
 
 // ===== ЗВУК =====
-function play(s){
-  if (!s) return;
-  s.currentTime = 0;
-  s.play().catch(()=>{});
+function play(sound){
+  if (!sound) return;
+  sound.currentTime = 0;
+  sound.play().catch(()=>{});
 }
 
 // ===== UI =====
@@ -57,24 +62,50 @@ function updateUI(){
   }
 }
 
-// ===== ТЕКСТ УРОНА (ВОЗЛЕ БОССА) =====
+// ===== ТЕКСТ УРОНА =====
 function showDamageText(text){
   const dmg = document.createElement("div");
   dmg.textContent = text;
   dmg.className = "damage-text";
 
-  const rect = monster.getBoundingClientRect();
-  const offsetX = Math.random() * 100 - 50;
-  const offsetY = Math.random() * 60 - 30;
-
-  dmg.style.left = rect.left + rect.width / 2 + offsetX + "px";
-  dmg.style.top = rect.top + rect.height / 2 + offsetY + "px";
+  const r = monster.getBoundingClientRect();
+  dmg.style.left = r.left + r.width/2 + (Math.random()*120-60) + "px";
+  dmg.style.top = r.top + r.height/2 + (Math.random()*60-30) + "px";
 
   document.body.appendChild(dmg);
-  setTimeout(() => dmg.remove(), 1000);
+  setTimeout(()=>dmg.remove(),1000);
 }
 
-// ===== АТАКА ПО МОНСТРУ =====
+// ===== СМЕНА МОНСТРА =====
+function spawnMonster(type){
+  play(hyperSound);
+
+  if (type === 0){
+    monster.src = "images/monster.png";
+    maxHp = 100;
+    document.body.classList.remove("scary-bg");
+  }
+
+  if (type === 1){
+    monster.src = "images/monster2.png";
+    maxHp = 300;
+    document.body.classList.add("scary-bg");
+  }
+
+  if (type === 2){
+    monster.src = "images/monster3.png";
+    maxHp = 400;
+  }
+
+  if (type === 3){
+    monster.src = "images/monster4.png";
+    maxHp = 500;
+  }
+
+  hp = maxHp;
+}
+
+// ===== АТАКА =====
 function attack(){
   play(hitSound);
 
@@ -84,16 +115,16 @@ function attack(){
   let total = 0;
   let crit = false;
 
-  for (let i = 0; i < multiHit; i++){
+  for(let i=0;i<multiHit;i++){
     let d = damage;
 
-    if (Math.random() * 100 < critChance){
+    if(Math.random()*100 < critChance){
       d *= critMult;
       crit = true;
     }
 
-    if (Math.random() * 100 < fire) d += 5;
-    d *= (1 + rage / 100);
+    if(Math.random()*100 < fire) d += 5;
+    d *= (1 + rage/100);
 
     total += Math.floor(d);
   }
@@ -101,74 +132,82 @@ function attack(){
   hp -= total;
   showDamageText((crit ? "CRIT " : "") + "-" + total);
 
+  // ===== СМЕРТЬ МОНСТРА =====
   if (hp <= 0){
     money += goldReward;
-    maxHp += 30;
-    hp = maxHp;
+
+    // ----- ЕСЛИ ОБЫЧНЫЙ -----
+    if (!chainActive){
+      kills++;
+
+      if (kills % 20 === 0){
+        chainActive = true;
+        phase = 1;
+        spawnMonster(1);
+      } else {
+        spawnMonster(0);
+      }
+    }
+    // ----- ЕСЛИ ЦЕПОЧКА -----
+    else {
+      phase++;
+
+      if (phase <= 3){
+        spawnMonster(phase);
+      } else {
+        chainActive = false;
+        phase = 0;
+        spawnMonster(0);
+      }
+    }
   }
 
   updateUI();
 }
 
-// ===== КЛИК ПО КАРТИНКЕ =====
+// ===== КЛИК ПО МОНСТРУ =====
 monster.addEventListener("click", attack);
-monster.addEventListener("touchstart", e => {
+monster.addEventListener("touchstart", e=>{
   e.preventDefault();
   attack();
 });
 
-// ===== ПОКУПКИ =====
+// ===== ПРОКАЧКИ =====
 function buy(key, action){
   if (money < prices[key]) return;
   money -= prices[key];
-  prices[key] = Math.floor(prices[key] * 1.6);
+  prices[key] = Math.floor(prices[key]*1.6);
   play(buySound);
   action();
   updateUI();
 }
 
-document.getElementById("upDamage").onclick =
-()=>buy("Damage", ()=>damage++);
-
-document.getElementById("upGold").onclick =
-()=>buy("Gold", ()=>goldReward += 5);
-
-document.getElementById("upCrit").onclick =
-()=>buy("Crit", ()=>critChance += 5);
-
-document.getElementById("upCritMult").onclick =
-()=>buy("CritMult", ()=>critMult += 0.5);
-
-document.getElementById("upMulti").onclick =
-()=>buy("Multi", ()=>multiHit++);
-
-document.getElementById("upFire").onclick =
-()=>buy("Fire", ()=>fire += 5);
-
-document.getElementById("upRage").onclick =
-()=>buy("Rage", ()=>rage += 5);
-
-document.getElementById("upAuto").onclick =
-()=>buy("Auto", ()=>autoDps++);
+document.getElementById("upDamage").onclick = ()=>buy("Damage",()=>damage++);
+document.getElementById("upGold").onclick = ()=>buy("Gold",()=>goldReward+=5);
+document.getElementById("upCrit").onclick = ()=>buy("Crit",()=>critChance+=5);
+document.getElementById("upCritMult").onclick = ()=>buy("CritMult",()=>critMult+=0.5);
+document.getElementById("upMulti").onclick = ()=>buy("Multi",()=>multiHit++);
+document.getElementById("upFire").onclick = ()=>buy("Fire",()=>fire+=5);
+document.getElementById("upRage").onclick = ()=>buy("Rage",()=>rage+=5);
+document.getElementById("upAuto").onclick = ()=>buy("Auto",()=>autoDps++);
 
 // ===== АВТО УРОН =====
 setInterval(()=>{
-  if (autoDps > 0){
+  if(autoDps > 0){
     hp -= autoDps;
-    showDamageText("-" + autoDps);
+    showDamageText("-"+autoDps);
 
-    if (hp <= 0){
+    if(hp <= 0){
       money += goldReward;
-      maxHp += 30;
-      hp = maxHp;
+      spawnMonster(chainActive ? phase : 0);
     }
     updateUI();
   }
 },1000);
 
-// ===== ФОНОВЫЙ ЗВУК =====
+// ===== ФОН МУЗЫКА =====
 document.body.addEventListener("touchstart",()=>{
-  if (bgSound && bgSound.paused){
+  if(bgSound && bgSound.paused){
     bgSound.play().catch(()=>{});
   }
 },{once:true});
