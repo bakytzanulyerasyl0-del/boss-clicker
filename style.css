@@ -1,86 +1,97 @@
-body {
-  background: #0b0b0b;
-  color: white;
-  font-family: Arial;
-  text-align: center;
+* {
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+
+  /* КРАСИВЫЙ ФОН */
+  background: radial-gradient(
+    circle at top,
+    #1b1b3a,
+    #0f0f1f,
+    #050509
+  );
+}
+
+/* ===== ССЫЛКА СВЕРХУ ===== */
 .top-link {
   display: inline-block;
-  font-size: 28px;
-  padding: 15px 30px;
   margin: 15px;
-  border-radius: 25px;
+  padding: 15px 30px;
+  font-size: 22px;
   color: gold;
   text-decoration: none;
-  background: linear-gradient(90deg, red, orange);
-  box-shadow: 0 0 25px red;
-  animation: glow 1.5s infinite;
+  border-radius: 30px;
+
+  background: linear-gradient(90deg, #ff0000, #ff9900);
+  box-shadow: 0 0 25px #ff3300;
+  animation: glowLink 1.5s infinite;
 }
 
-@keyframes glow {
-  0% { box-shadow: 0 0 15px red; }
-  50% { box-shadow: 0 0 35px orange; }
-  100% { box-shadow: 0 0 15px red; }
+@keyframes glowLink {
+  0% { box-shadow: 0 0 15px #ff3300; }
+  50% { box-shadow: 0 0 35px #ffaa00; }
+  100% { box-shadow: 0 0 15px #ff3300; }
 }
 
-.monster-box {
-  margin: 20px;
+/* ===== ЗАГОЛОВОК ===== */
+h1 {
+  margin-top: 10px;
+  font-size: 32px;
 }
 
-#monster {
-  width: 200px;
-  animation: monsterGlow 2s infinite;
-  cursor: pointer;
+/* ===== СТАТЫ ===== */
+.stats {
+  font-size: 18px;
+  margin: 10px 0;
+  line-height: 1.6;
 }
 
-@keyframes monsterGlow {
-  0% { filter: drop-shadow(0 0 5px red); }
-  50% { filter: drop-shadow(0 0 25px orange); }
-  100% { filter: drop-shadow(0 0 5px red); }
-}
-
-#attackBtn {
-  font-size: 26px;
-  padding: 15px 40px;
-  border-radius: 25px;
-  background: linear-gradient(90deg, red, orange);
-  color: white;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 0 25px red;
-  animation: glow 1.5s infinite;
-}
-
+/* ===== HP БАР ===== */
 .hp-bar {
-  width: 200px;
-  height: 15px;
+  width: 220px;
+  height: 16px;
   background: #333;
-  margin: auto;
+  margin: 10px auto;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 #hpFill {
   height: 100%;
-  background: red;
+  width: 100%;
+  background: linear-gradient(90deg, red, orange);
 }
 
-.shop button {
+/* ===== МОНСТР ===== */
+#monster {
+  width: 180px;
+  margin: 15px auto;
   display: block;
-  margin: 6px auto;
-  padding: 10px;
-  width: 340px;
+  cursor: pointer;
+
+  animation: monsterGlow 2s infinite;
 }
 
-#hyperText {
-  display: none;
-  color: red;
-  font-weight: bold;
+@keyframes monsterGlow {
+  0% {
+    filter: drop-shadow(0 0 10px red);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px orange);
+    transform: scale(1.05);
+  }
+  100% {
+    filter: drop-shadow(0 0 10px red);
+  }
 }
 
-.hyper {
-  background: darkred;
-}
-
+/* ТРЯСКА */
 .shake {
   animation: shake 0.2s;
 }
@@ -92,15 +103,62 @@ body {
   75% { transform: translateX(-6px); }
   100% { transform: translateX(0); }
 }
-@media (max-width: 768px) {
 
-  h1 {
-    font-size: 28px;
+/* ===== КНОПКА АТАКИ ===== */
+#attackBtn {
+  margin: 20px auto;
+  font-size: 26px;
+  padding: 16px 40px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+
+  color: white;
+  background: linear-gradient(90deg, #ff0000, #ff9900);
+  box-shadow: 0 0 25px #ff3300;
+
+  animation: attackGlow 1.5s infinite;
+}
+
+@keyframes attackGlow {
+  0% {
+    box-shadow: 0 0 15px #ff3300;
   }
+  50% {
+    box-shadow: 0 0 40px #ffaa00;
+    transform: scale(1.08);
+  }
+  100% {
+    box-shadow: 0 0 15px #ff3300;
+  }
+}
 
-  .top-link {
-    font-size: 20px;
-    padding: 12px 20px;
+/* ===== КНОПКИ ПРОКАЧЕК ===== */
+button {
+  display: block;
+  width: 90%;
+  max-width: 360px;
+  margin: 8px auto;
+  padding: 12px;
+  font-size: 16px;
+
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+
+  background: #222;
+  color: white;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+/* ===== МОБИЛКА ===== */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 26px;
   }
 
   #monster {
@@ -108,20 +166,7 @@ body {
   }
 
   #attackBtn {
-    font-size: 22px;
-    padding: 18px 30px;
     width: 90%;
+    font-size: 24px;
   }
-
-  .shop button {
-    width: 95%;
-    font-size: 16px;
-  }
-
-  .stats {
-    font-size: 16px;
-    line-height: 1.6;
-  }
-
 }
-

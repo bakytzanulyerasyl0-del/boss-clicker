@@ -8,56 +8,42 @@
 </head>
 <body>
 
-<!-- 🔗 БОЛЬШАЯ ССЫЛКА -->
 <a class="top-link"
    href="https://www.roblox.com/users/3414207520/profile"
    target="_blank">
-🔥 МОЙ ROBLOX ПРОФИЛЬ 🔥
+🔥 МОЙ ROBLOX 🔥
 </a>
 
-<h1>⚔️ BOSS CLICKER ⚔️</h1>
+<h1>BOSS CLICKER</h1>
 
 <div class="stats">
-  ❤️ HP: <span id="bossHp">0</span> |
-  💰 Деньги: <span id="money">0</span> |
-  ⚔️ Урон: <span id="damage">0</span> |
-  🧠 Уровень: <span id="level">1</span>
+  ❤️ HP: <span id="hpText">0</span><br>
+  💰 Деньги: <span id="money">0</span><br>
+  ⚔️ Урон: <span id="damage">1</span>
 </div>
 
-<div class="monster-box">
-  <div class="hp-bar"><div id="hpFill"></div></div>
-
-  <a href="https://www.roblox.com/users/3414207520/profile"
-     target="_blank"
-     id="monsterLink">
-    <img id="monster" src="images/monster.png">
-  </a>
-
-  <div id="hyperText">🔥 ГИПЕР БОСС 🔥</div>
+<div class="hp-bar">
+  <div id="hpFill"></div>
 </div>
 
-<button id="attackBtn">⚔️ АТАКОВАТЬ</button>
+<img id="monster" src="images/monster.png">
+
+<button id="attackBtn">⚔️ АТАКА</button>
 
 <h2>🛒 ПРОКАЧКИ</h2>
 
-<div class="shop">
-  <button id="upDamage">+ Урон (+5) — 💰 <span id="priceDamage">0</span></button>
-  <button id="upCrit">Крит шанс (+5%) — 💰 <span id="priceCrit">0</span></button>
-  <button id="upCritMult">Крит урон — 💰 <span id="priceCritMult">0</span></button>
-  <button id="upMulti">Мультиудар — 💰 <span id="priceMulti">0</span></button>
-  <button id="upGold">Больше золота — 💰 <span id="priceGold">0</span></button>
-  <button id="upRage">Ярость — 💰 <span id="priceRage">0</span></button>
-  <button id="upExplosion">Взрыв — 💰 <span id="priceExplosion">0</span></button>
-  <button id="upFire">Огонь — 💰 <span id="priceFire">0</span></button>
-  <button id="upShock">Шок — 💰 <span id="priceShock">0</span></button>
-  <button id="upBleed">Кровоток — 💰 <span id="priceBleed">0</span></button>
-</div>
+<button id="upDamage">Урон +1 — 💰 <span id="priceDamage">10</span></button>
+<button id="upGold">Золото +5 — 💰 <span id="priceGold">25</span></button>
+<button id="upCrit">Крит шанс +5% — 💰 <span id="priceCrit">40</span></button>
+<button id="upCritMult">Крит урон — 💰 <span id="priceCritMult">60</span></button>
+<button id="upMulti">Мультиудар — 💰 <span id="priceMulti">80</span></button>
+<button id="upFire">Огонь — 💰 <span id="priceFire">100</span></button>
+<button id="upRage">Ярость — 💰 <span id="priceRage">120</span></button>
+<button id="upAuto">Авто-урон — 💰 <span id="priceAuto">150</span></button>
 
-<!-- 🔊 ЗВУКИ -->
 <audio id="hitSound" src="sounds/hit.mp3"></audio>
 <audio id="buySound" src="sounds/buy.mp3"></audio>
 <audio id="bgSound" src="sounds/bg.mp3" loop></audio>
-<audio id="hyperSound" src="sounds/soundshyper.mp3"></audio>
 
 <script src="script.js"></script>
 </body>
