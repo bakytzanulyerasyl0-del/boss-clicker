@@ -1,92 +1,95 @@
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: #eee;
-  background: radial-gradient(circle at top, #1a0000, #000);
-  overflow-x: hidden;
-}
-
-/* дымящийся фон */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background:
-    repeating-radial-gradient(circle, rgba(255,0,0,0.05) 0 2px, transparent 2px 6px);
-  animation: fog 20s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes fog {
-  from { transform: translateY(0); }
-  to { transform: translateY(-200px); }
-}
-
-.game {
-  min-height: 100vh;
-}
-
-/* БОСС */
-.boss-area {
+  background: #0b0b0b;
+  color: white;
+  font-family: Arial;
   text-align: center;
-  padding: 20px;
 }
 
-.monster {
-  width: 220px;
-  margin: 15px 0;
+.top-link {
+  display: inline-block;
+  font-size: 28px;
+  padding: 15px 30px;
+  margin: 15px;
+  border-radius: 25px;
+  color: gold;
+  text-decoration: none;
+  background: linear-gradient(90deg, red, orange);
+  box-shadow: 0 0 25px red;
+  animation: glow 1.5s infinite;
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 15px red; }
+  50% { box-shadow: 0 0 35px orange; }
+  100% { box-shadow: 0 0 15px red; }
+}
+
+.monster-box {
+  margin: 20px;
+}
+
+#monster {
+  width: 200px;
+  animation: monsterGlow 2s infinite;
   cursor: pointer;
-  animation: float 3s ease-in-out infinite;
-  transition: transform 0.1s, filter 0.1s;
 }
 
-/* АНИМАЦИЯ МОНСТРА */
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
+@keyframes monsterGlow {
+  0% { filter: drop-shadow(0 0 5px red); }
+  50% { filter: drop-shadow(0 0 25px orange); }
+  100% { filter: drop-shadow(0 0 5px red); }
 }
 
-.monster:active {
-  transform: scale(0.9);
-  filter: brightness(1.4);
+#attackBtn {
+  font-size: 26px;
+  padding: 15px 40px;
+  border-radius: 25px;
+  background: linear-gradient(90deg, red, orange);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 25px red;
+  animation: glow 1.5s infinite;
 }
 
-/* HP */
 .hp-bar {
-  width: 220px;
-  height: 18px;
-  background: #330000;
-  margin: 10px auto;
-  border-radius: 10px;
-  overflow: hidden;
+  width: 200px;
+  height: 15px;
+  background: #333;
+  margin: auto;
 }
 
 #hpFill {
   height: 100%;
-  width: 100%;
-  background: linear-gradient(90deg, darkred, red);
+  background: red;
 }
 
-/* МАГАЗИН */
-.shop-area {
-  padding: 20px;
-  background: rgba(0,0,0,0.7);
-}
-
-button {
-  width: 100%;
-  max-width: 320px;
-  margin: 6px auto;
+.shop button {
   display: block;
-  padding: 14px;
-  font-size: 15px;
-  border-radius: 10px;
-  border: none;
-  background: #220000;
-  color: #fff;
+  margin: 6px auto;
+  padding: 10px;
+  width: 340px;
 }
 
-button:active {
-  background: #440000;
+#hyperText {
+  display: none;
+  color: red;
+  font-weight: bold;
 }
+
+.hyper {
+  background: darkred;
+}
+
+.shake {
+  animation: shake 0.2s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+

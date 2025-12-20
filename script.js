@@ -1,149 +1,127 @@
+let level = 1;
+let maxHp = 100;
+let bossHp = 100;
+
 let money = 0;
-let damage = 1;
+let damage = 5;
+let reward = 10;
 
-let critChance = 0;
-let critPower = 2;
+let crit = 0;
+let critMult = 2;
+let multi = 1;
+let rage = 0;
+let explosion = 0;
+let fire = 0;
+let shock = 0;
+let bleed = 0;
 
-let goldBonus = 1;
-let passiveIncome = 0;
+let prices = {
+  damage: 20,
+  crit: 40,
+  critMult: 80,
+  multi: 60,
+  gold: 50,
+  rage: 70,
+  explosion: 100,
+  fire: 110,
+  shock: 120,
+  bleed: 130
+};
 
-let bossLevel = 1;
-let bossMaxHp = 20;
-let bossHp = bossMaxHp;
+const monster = document.getElementById("monster");
+const hpText = document.getElementById("bossHp");
+const moneyText = document.getElementById("money");
+const dmgText = document.getElementById("damage");
+const lvlText = document.getElementById("level");
+const hpFill = document.getElementById("hpFill");
+const hyperText = document.getElementById("hyperText");
 
-let autoAttack = false;
-let autoSpeed = 1200;
-let autoTimer = null;
-
-let isDead = false;
-
-// ЗВУКИ
-const bgMusic = document.getElementById("bgMusic");
 const hitSound = document.getElementById("hitSound");
 const buySound = document.getElementById("buySound");
+const bgSound = document.getElementById("bgSound");
+const hyperSound = document.getElementById("hyperSound");
 
-let audioStarted = false;
+function play(s){ s.currentTime=0; s.play().catch(()=>{}); }
 
-function startAudio() {
-  if (!audioStarted) {
-    bgMusic.volume = 0.3;
-    bgMusic.play().catch(()=>{});
-    audioStarted = true;
+function updateUI(){
+  hpText.textContent = Math.max(0,bossHp);
+  moneyText.textContent = Math.floor(money);
+  dmgText.textContent = damage;
+  lvlText.textContent = level;
+  hpFill.style.width = (bossHp/maxHp*100)+"%";
+}
+
+function updatePrices(){
+  for(let k in prices){
+    document.getElementById("price"+k[0].toUpperCase()+k.slice(1)).textContent = prices[k];
   }
 }
 
-// ---------- UI ----------
-function updateUI(text="") {
-  if (bossHp < 0 || isNaN(bossHp)) bossHp = 0;
+function attack(){
+  play(hitSound);
+  monster.classList.add("shake");
+  setTimeout(()=>monster.classList.remove("shake"),200);
 
-  document.getElementById("money").innerText = Math.floor(money);
-  document.getElementById("damage").innerText = damage;
-  document.getElementById("bossHp").innerText = bossHp;
-  document.getElementById("crit").innerText =
-    Math.floor(critChance * 100) + "%";
-
-  document.getElementById("hpFill").style.width =
-    Math.max(0, (bossHp / bossMaxHp) * 100) + "%";
-
-  if (text) document.getElementById("text").innerText = text;
-}
-
-// ---------- АТАКА ----------
-function attack() {
-  if (isDead) return;
-
-  hitSound.currentTime = 0;
-  hitSound.play().catch(()=>{});
-
-  let dmg = damage;
-  if (Math.random() < critChance) {
-    dmg = Math.floor(dmg * critPower);
+  let total = 0;
+  for(let i=0;i<multi;i++){
+    let d = damage;
+    if(Math.random()*100<crit) d*=critMult;
+    if(Math.random()*100<explosion) d+=20;
+    if(Math.random()*100<fire) d+=10;
+    if(Math.random()*100<shock) d+=15;
+    if(Math.random()*100<bleed) d+=12;
+    d*=1+rage/100;
+    total+=d;
   }
 
-  bossHp -= dmg;
+  bossHp-=total;
 
-  if (bossHp <= 0) {
-    bossHp = 0;
-    killBoss();
-  } else {
-    updateUI("⚔️ Урон " + dmg);
+  if(bossHp<=0){
+    money+=reward;
+    level++;
+    spawnBoss();
   }
-}
-
-// ---------- СМЕРТЬ БОССА ----------
-function killBoss() {
-  isDead = true;
-
-  let reward = Math.floor((5 + bossLevel * 2) * goldBonus);
-  money += reward;
-
-  updateUI("💀 Босс убит! +" + reward + " 💰");
-
-  setTimeout(() => {
-    bossLevel++;
-    bossMaxHp = Math.floor(bossMaxHp * 1.3 + 15);
-    bossHp = bossMaxHp;
-    isDead = false;
-    updateUI("👹 Новый босс • Уровень " + bossLevel);
-  }, 600);
-}
-
-// ---------- ПРОКАЧКИ ----------
-function buy(cost, action, text) {
-  if (money >= cost) {
-    money -= cost;
-    action();
-    buySound.currentTime = 0;
-    buySound.play().catch(()=>{});
-    updateUI(text);
-  }
-}
-
-function buyDamage(){ buy(10, ()=>damage+=1, "+1 урон"); }
-function buyDamage5(){ buy(50, ()=>damage+=5, "+5 урон"); }
-function buyDamage10(){ buy(120, ()=>damage+=10, "+10 урон"); }
-function buyDamageX2(){ buy(300, ()=>damage*=2, "x2 урон"); }
-function buyDamageX5(){ buy(1200, ()=>damage*=5, "x5 урон"); }
-
-function buyCrit(){ buy(100, ()=>critChance+=0.05, "+5% крит"); }
-function buyCritPower(){ buy(250, ()=>critPower=3, "Крит x3"); }
-
-function buyGold(){ buy(150, ()=>goldBonus*=1.5, "Золото x1.5"); }
-function buyPassive(){ buy(200, ()=>passiveIncome+=1, "Пассив +1"); }
-
-// ---------- AUTO ----------
-function buyAuto(){
-  if (!autoAttack) {
-    buy(200, ()=>{
-      autoAttack = true;
-      autoTimer = setInterval(()=>{
-        if (!isDead) attack();
-      }, autoSpeed);
-    }, "🤖 Авто-удар");
-  }
-}
-
-function buyAutoSpeed(){
-  buy(400, ()=>{
-    autoSpeed = Math.max(300, autoSpeed-200);
-    if (autoAttack) {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(()=>{
-        if (!isDead) attack();
-      }, autoSpeed);
-    }
-  }, "⚡ Авто быстрее");
-}
-
-// ---------- ПАССИВ ----------
-setInterval(()=>{
-  money += passiveIncome;
   updateUI();
-},1000);
+}
 
-// ---------- КЛИК (БЕЗ ДУБЛЕЙ) ----------
-const monster = document.getElementById("monster");
-monster.onclick = attack;
+function spawnBoss(){
+  if(level%5===0){
+    document.body.classList.add("hyper");
+    hyperText.style.display="block";
+    play(hyperSound);
+    maxHp+=200;
+  } else {
+    document.body.classList.remove("hyper");
+    hyperText.style.display="none";
+    maxHp+=50;
+  }
+  bossHp=maxHp;
+}
 
-// ---------- СТАРТ ----------
-updateUI("Ткни по монстру");
+function buy(key,fn){
+  if(money<prices[key])return;
+  money-=prices[key];
+  prices[key]=Math.floor(prices[key]*1.4);
+  play(buySound);
+  fn();
+  updatePrices();
+  updateUI();
+}
+
+document.getElementById("attackBtn").onclick=attack;
+document.getElementById("upDamage").onclick=()=>buy("damage",()=>damage+=5);
+document.getElementById("upCrit").onclick=()=>buy("crit",()=>crit+=5);
+document.getElementById("upCritMult").onclick=()=>buy("critMult",()=>critMult+=0.5);
+document.getElementById("upMulti").onclick=()=>buy("multi",()=>multi++);
+document.getElementById("upGold").onclick=()=>buy("gold",()=>reward+=5);
+document.getElementById("upRage").onclick=()=>buy("rage",()=>rage+=5);
+document.getElementById("upExplosion").onclick=()=>buy("explosion",()=>explosion+=5);
+document.getElementById("upFire").onclick=()=>buy("fire",()=>fire+=5);
+document.getElementById("upShock").onclick=()=>buy("shock",()=>shock+=5);
+document.getElementById("upBleed").onclick=()=>buy("bleed",()=>bleed+=5);
+
+document.body.onclick=()=>{ if(bgSound.paused) bgSound.play(); };
+
+spawnBoss();
+updatePrices();
+updateUI();
