@@ -228,3 +228,113 @@ button:active {
   from { filter: brightness(1); }
   to { filter: brightness(1.3); }
 }
+.ad-banner {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 70px;
+  z-index: 9999;
+  animation: adGlow 2s infinite alternate;
+}
+
+#adLeft {
+  left: 5px;
+}
+
+#adRight {
+  right: 5px;
+}
+
+.ad-banner img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+@keyframes adGlow {
+  from {
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+  }
+  to {
+    box-shadow: 0 0 25px rgba(255,255,255,0.9);
+  }
+}
+
+/* 📱 Телефоны */
+@media (max-width: 768px) {
+  .ad-banner {
+    width: 55px;
+  }
+}
+#adsContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.ad {
+  position: absolute;
+  width: 60px;
+  pointer-events: auto;
+  animation: adPulse 2s infinite alternate;
+}
+
+.ad img {
+  width: 100%;
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.9);
+}
+
+@keyframes adPulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255,255,255,0.4);
+  }
+  to {
+    transform: scale(1.08);
+    box-shadow: 0 0 25px rgba(255,255,255,1);
+  }
+}
+
+/* 📱 телефон */
+@media (max-width: 768px) {
+  .ad {
+    width: 45px;
+  }
+}
+#bigAd {
+  position: fixed;
+  right: 10px;
+  bottom: 90px;
+  width: 180px;        /* 🔥 БОЛЬШОЙ */
+  z-index: 9999;
+  animation: bigAdGlow 1.5s infinite alternate;
+}
+
+#bigAd img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 0 35px rgba(255,255,255,1);
+  cursor: pointer;
+}
+
+@keyframes bigAdGlow {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255,255,255,0.7);
+  }
+  to {
+    transform: scale(1.1);
+    box-shadow: 0 0 50px rgba(255,255,255,1);
+  }
+}
+
+/* 📱 ТЕЛЕФОН */
+@media (max-width: 768px) {
+  #bigAd {
+    width: 140px;
+    bottom: 70px;
+  }
+}
